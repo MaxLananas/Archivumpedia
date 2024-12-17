@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArchivumPédia - Dynasties Pharaoniques</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<style>
+    :root {
+    --primary-gold: #D4AF37;
+    --secondary-gold: #FFD700;
+    --egyptian-blue: #1034A6;
+    --papyrus: #F4D03F;
+    --sand: #C2B280;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background: 
+        /* Couche de dégradé principal */
+        linear-gradient(
+            135deg,
+            #2d1810 0%,
+            #1a1413 25%,
+            #362511 50%,
+            #1f1815 75%,
+            #261b0f 100%
+        ),
+        
+        /* Motif de pyramide stylisé */
+        linear-gradient(
+            45deg,
+            transparent 45%,
+            rgba(255, 215, 0, 0.1) 45%,
+            rgba(255, 215, 0, 0.1) 55%,
+            transparent 55%
+        ),
+        linear-gradient(
+            to right,
+            transparent 45%,
+            rgba(255, 215, 0, 0.1) 45%,
+            rgba(255, 215, 0, 0.1) 55%,
+            transparent 55%
+        ),
+        
+        /* Texture de sable animée */
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15' fill='%23c1a878'/%3E%3C/svg%3E"),
+        
+        /* Motifs hiéroglyphiques */
+        radial-gradient(
+            circle at center,
+            transparent 0%,
+            rgba(193, 168, 120, 0.1) 25%,
+            transparent 50%
+        );
+    
+    background-size: 
+        100% 100%,
+        100px 100px,
+        100px 100px,
+        200px 200px,
+        400px 400px;
+        
+    background-position: 
+        center,
+        center,
+        center,
+        0 0,
+        center;
+        
+    background-attachment: fixed; /* Permet le défilement tout en gardant le fond fixe */
+    position: relative;
+    overflow-y: auto; /* Permet le défilement vertical */
+    color: #fff;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            rgba(193, 168, 120, 0.03) 10px,
+            rgba(193, 168, 120, 0.03) 20px
+        );
+    animation: overlayShift 15s linear infinite;
+    pointer-events: none;
+}
+
+
+/* Overlay de texture */
+.background-overlay {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            rgba(193, 168, 120, 0.03) 10px,
+            rgba(193, 168, 120, 0.03) 20px
+        );
+    pointer-events: none; /* Permet de cliquer à travers */
+    z-index: 1;
+    animation: overlayShift 15s linear infinite;
+}
+
+/* Effet de lueur */
+.glow-effect {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        circle at 50% 50%,
+        rgba(255, 215, 0, 0.15),
+        transparent 60%
+    );
+    pointer-events: none;
+    z-index: 2;
+    animation: glowPulse 8s ease-in-out infinite;
+}
+
+.sidebar {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    border-right: 2px solid var(--primary-gold);
+    position: relative;
+    overflow: hidden;
+}
+
+.divider-line {
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, var(--primary-gold), transparent);
+    margin: 2rem 0;
+}
+
+.nav-item {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.nav-item:hover {
+    border-left-color: var(--primary-gold);
+    background: linear-gradient(90deg, rgba(212, 175, 55, 0.1), transparent);
+}
+
+.golden-text {
+    background: linear-gradient(to right, var(--primary-gold), var(--secondary-gold));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.content-card {
+    background: #1a1a1a;
+    border: 1px solid var(--primary-gold);
+    transition: transform 0.3s ease;
+}
+
+.content-card:hover {
+    transform: scale(1.02);
+    border-color: var(--secondary-gold);
+}
+
+.explore-button {
+    border: 1px solid var(--primary-gold);
+    transition: all 0.3s ease;
+}
+
+.explore-button:hover {
+    background-color: var(--primary-gold);
+    color: #000;
+}
+
+.content-container {
+     background: rgba(26, 26, 26, 0.9);
+     border: 1px solid var(--primary-gold);
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.lafooter {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    border-right: 2px solid var(--primary-gold);
+}
+
+/* Thème clair */
+body.light-theme {
+        background: linear-gradient(135deg, #f0f0f0 0%, #ffffff 100%);
+        color: #000;
+    }
+
+    body.light-theme .sidebar {
+        background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
+        border-right-color: #000;
+    }
+
+    body.light-theme .content-card {
+        background: linear-gradient(145deg, #f5f5f5, #ffffff);
+        border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    body.light-theme .golden-text {
+        background: linear-gradient(to right, #000, #333);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+
+    body.light-theme .text-gray-300,
+    body.light-theme .text-gray-400,
+    body.light-theme .text-gray-500 {
+        color: #333;
+    }
+
+    /* Reste de votre CSS original */
+    /* ... (gardez tout le reste de votre CSS) */
+
+    /* Styles pour le bouton de thème */
+    #theme-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        background-color: rgba(212, 175, 55, 0.1);
+        border: 1px solid var(--primary-gold);
+        padding: 10px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    #theme-toggle:hover {
+        background-color: rgba(212, 175, 55, 0.2);
+    }
+</style>
+<body>
+    <!-- Bouton de changement de thème -->
+    <button id="theme-toggle" aria-label="Changer de thème">
+        🌓
+    </button>
+
+    <div class="flex min-h-screen">
+        <!-- Barre latérale -->
+        <nav class="sidebar w-72 p-8 space-y-6">
+            <div class="mb-12">
+                <h1 class="text-3xl font-bold golden-text">ArchivumPédia</h1>
+                <div class="divider-line"></div>
+            </div>
+            <div class="space-y-6">
+                <a href="./index.html" class="nav-item block px-6 py-3 text-gray-300 hover:text-white">Accueil</a>
+                <div class="space-y-4">
+                    <div class="px-6 text-sm text-gray-500 uppercase tracking-wider">Collections</div>
+                    <a href="./index2.html" class="nav-item block px-6 py-3 text-gray-300 hover:text-white">Dynasties Pharaoniques</a>
+                    <a href="./index3.html" class="nav-item block px-6 py-3 text-gray-300 hover:text-white">Temples & Pyramides</a>
+                    <a href="./index4.html" class="nav-item block px-6 py-3 text-gray-300 hover:text-white">Hiéroglyphes & Écritures</a>
+                    <a href="./index5.html" class="nav-item block px-6 py-3 text-gray-300 hover:text-white">Divinités & Mythologie</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="w-full max-w-4xl mx-auto p-8 space-y-8">
+            <article class="content-container rounded-lg overflow-hidden">
+                <img src="https://via.placeholder.com/1200x600" alt="Image de l'article" class="w-full h-96 object-cover">
+                <div class="p-6">
+                    <h1 class="text-4xl font-bold golden-text mb-4">Titre de l'Article</h1>
+                    <p class="text-gray-300 mb-4">
+                        Par <span class="text-yellow-400">Auteur</span> - Publié le <span class="text-gray-500">Date</span>
+                    </p>
+                    <p class="text-gray-400 leading-relaxed">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. Cras venenatis euismod malesuada. Nullam tincidunt eros nec augue ultricies, a tincidunt lacus interdum. Suspendisse potenti. Etiam ut metus efficitur, facilisis arcu sit amet, interdum nulla.
+                    </p>
+                    <p class="text-gray-400 leading-relaxed mt-4">
+                        Aenean eget felis eget nunc lobortis mattis aliquam faucibus purus. Etiam dignissim diam quis enim lobortis scelerisque fermentum. Pellentesque eu tincidunt tortor aliquam nulla facilisi cras fermentum odio. Venenatis a condimentum vitae sapien pellentesque habitant morbi tristique.
+                    </p>
+                </div>
+            </article>
+
+            <footer class="p-6 content-container rounded-lg mt-8 border-t border-gray-700">
+                <h2 class="text-2xl font-bold golden-text mb-4">Sources</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="flex items-start space-x-4">
+                        <div class="text-yellow-400">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 2a8 8 0 100 16 8 8 0 000-16z"></path>
+                            </svg>
+                        </div>
+                        <a href="#" class="text-gray-400 hover:text-yellow-400 transition">
+                            <p class="font-semibold">Source 1</p>
+                            <p class="text-sm">Description ou contexte rapide de cette source.</p>
+                        </a>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="text-yellow-400">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 2a8 8 0 100 16 8 8 0 000-16z"></path>
+                            </svg>
+                        </div>
+                        <a href="#" class="text-gray-400 hover:text-yellow-400 transition">
+                            <p class="font-semibold">Source 2</p>
+                            <p class="text-sm">Description ou contexte rapide de cette source.</p>
+                        </a>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="text-yellow-400">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 2a8 8 0 100 16 8 8 0 000-16z"></path>
+                            </svg>
+                        </div>
+                        <a href="#" class="text-gray-400 hover:text-yellow-400 transition">
+                            <p class="font-semibold">Source 3</p>
+                            <p class="text-sm">Description ou contexte rapide de cette source.</p>
+                        </a>
+                    </div>
+                </div>
+                <div class="mt-6 text-center text-gray-500 text-sm">
+                    &copy; 2024 ArchivumPédia - Tous droits réservés.
+                </div>
+            </footer>
+            
+        </main>
+    </div>
+    <footer class="bg-gradient-to-r from-gray-900 via-egyptian-blue to-gray-900 text-white py-16 lafooter">
+        <div class="container mx-auto px-6 md:px-12">
+            <!-- Section supérieure : Informations et navigation -->
+            <div class="flex flex-col lg:flex-row justify-between items-center lg:items-start">
+                <!-- Logo et description -->
+                <div class="text-center lg:text-left mb-8 lg:mb-0">
+                    <h3 class="text-3xl font-extrabold golden-text mb-4">ArchivumPédia</h3>
+                    <p class="text-lg text-gray-300 max-w-md">
+                        Découvrez les mystères et merveilles de l'Égypte antique à travers notre encyclopédie interactive.
+                    </p>
+                </div>
+    
+                <!-- Liens rapides -->
+                <div class="flex flex-col lg:flex-row items-center lg:items-start space-y-6 lg:space-y-0 lg:space-x-12">
+                    <div class="text-center lg:text-left">
+                        <h4 class="text-xl font-semibold golden-text mb-4">Navigation</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-300 hover:text-yellow-500">Accueil</a></li>
+                            <li><a href="./index2.html" class="text-gray-300 hover:text-yellow-500">Dynasties Pharaoniques</a></li>
+                            <li><a href="./index3.html" class="text-gray-300 hover:text-yellow-500">Temples & Pyramides</a></li>
+                            <li><a href="./index4.html" class="text-gray-300 hover:text-yellow-500">Hiéroglyphes</a></li>
+                            <li><a href="./index5.html" class="text-gray-300 hover:text-yellow-500">Divinités</a></li>
+                        </ul>
+                    </div>
+    
+                    <div class="text-center lg:text-left">
+                        <h4 class="text-xl font-semibold golden-text mb-4">Support</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-300 hover:text-yellow-500">À propos</a></li>
+                            <li><a href="#" class="text-gray-300 hover:text-yellow-500">Politique de Confidentialité</a></li>
+                            <li><a href="#" class="text-gray-300 hover:text-yellow-500">Conditions d'Utilisation</a></li>
+                            <li><a href="#" class="text-gray-300 hover:text-yellow-500">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Ligne décorative -->
+            <div class="mt-12 border-t border-gray-700"></div>
+    
+            <!-- Section inférieure : Réseaux sociaux et droits -->
+            <div class="mt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm text-gray-400 text-center md:text-left">
+                    &copy; 2024 ArchivumPédia. Tous droits réservés.
+                </p>
+                <div class="flex space-x-4 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-yellow-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2.162c3.204 0 3.584.012 4.85.07 1.366.062 2.633.351 3.608 1.326.975.975 1.264 2.242 1.326 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.351 2.633-1.326 3.608-.975.975-2.242 1.264-3.608 1.326-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.351-3.608-1.326-.975-.975-1.264-2.242-1.326-3.608-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.062-1.366.351-2.633 1.326-3.608.975-.975 2.242-1.264 3.608-1.326 1.266-.058 1.646-.07 4.85-.07zM12 0C8.741 0 8.332.014 7.052.072 5.297.146 3.65.77 2.324 2.095.999 3.42.375 5.067.302 6.822.14 8.102.125 8.512.125 12s.014 3.898.072 5.178c.074 1.755.698 3.402 2.023 4.727 1.325 1.325 2.972 1.949 4.727 2.023 1.28.058 1.69.072 5.178.072s3.898-.014 5.178-.072c1.755-.074 3.402-.698 4.727-2.023 1.325-1.325 1.949-2.972 2.023-4.727.058-1.28.072-1.69.072-5.178s-.014-3.898-.072-5.178c-.074-1.755-.698-3.402-2.023-4.727-1.325-1.325-2.972-1.949-4.727-2.023C15.898.014 15.488 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-10.845a1.44 1.44 0 1 0 0-2.88 1.44 1.44 0 0 0 0 2.88z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-yellow-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0C.767 3.425.017 5.252 0 12c.017 6.707.751 8.595 4.385 8.816 3.599.246 11.626.245 15.23 0C23.233 20.575 23.983 18.748 24 12c-.017-6.707-.751-8.595-4.385-8.816zM9 16V8l8 3.993L9 16z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-yellow-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.317 4.372a19.712 19.712 0 0 0-4.874-1.549.074.074 0 0 0-.079.037c-.21.375-.444.865-.608 1.249a18.273 18.273 0 0 0-5.487 0 12.676 12.676 0 0 0-.61-1.249.076.076 0 0 0-.079-.037 19.64 19.64 0 0 0-4.874 1.549.07.07 0 0 0-.032.028C1.533 7.85.922 11.228 1.253 14.577a.077.077 0 0 0 .031.052 19.9 19.9 0 0 0 5.993 3.029.077.077 0 0 0 .084-.028c.462-.63.874-1.295 1.228-1.994a.076.076 0 0 0-.042-.106 13.12 13.12 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.35 10.35 0 0 0 .396-.31.074.074 0 0 1 .077-.011c4.168 1.904 8.682 1.904 12.79 0a.074.074 0 0 1 .078.01c.126.104.252.21.396.311.051.04.047.109-.007.128-.598.35-1.22.645-1.873.891a.077.077 0 0 0-.042.107c.36.698.772 1.362 1.228 1.993a.076.076 0 0 0 .084.028 19.836 19.836 0 0 0 6.003-3.028.077.077 0 0 0 .031-.053c.402-3.95-.677-7.297-2.858-10.321a.061.061 0 0 0-.031-.029zM8.02 12.147c-.954 0-1.737-.876-1.737-1.945s.77-1.945 1.737-1.945c.968 0 1.751.876 1.737 1.945 0 1.07-.77 1.945-1.737 1.945zm7.957 0c-.954 0-1.737-.876-1.737-1.945s.77-1.945 1.737-1.945c.968 0 1.751.876 1.737 1.945 0 1.07-.77 1.945-1.737 1.945z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // Script de gestion du thème
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        // Vérifier le thème précédent dans le localStorage
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            body.classList.add(savedTheme);
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (body.classList.contains('light-theme')) {
+                body.classList.remove('light-theme');
+                localStorage.setItem('theme', '');
+            } else {
+                body.classList.add('light-theme');
+                localStorage.setItem('theme', 'light-theme');
+            }
+        });
+    </script>
+</body>
+</html>
